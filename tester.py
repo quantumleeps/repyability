@@ -7,8 +7,8 @@ from math import floor
 engine = Component(Distribution(400, 10), Distribution(12, 1.8), 'Engine', comp_type='np')
 gearbox = Component(Distribution(410, 20), Distribution(8, 0.8), 'Gearbox', comp_type='np')
 hp_pump = Component(Distribution(410, 20), Distribution(8, 0.8), 'HP Pump', comp_type='np')
+# diesel_skid = treeNode('Diesel Skid', 'XofY', engine, gearbox, hp_pump, frac=2/3)
 diesel_skid = treeNode('Diesel Skid', 'AND', engine, gearbox, hp_pump)
-
 px_array = Component(Distribution(400, 10), Distribution(12, 1.8), 'PXs', comp_type='np')
 membrane = Component(Distribution(410, 20), Distribution(8, 0.8), 'Membrane', comp_type='np')
 membrane_skid = treeNode('Membrane Skid', 'AND', px_array, membrane)
@@ -28,6 +28,8 @@ while main_counter < total_time:
                 child.runtime = 0
                 child.running = False
                 diesel_skid.update_node_status()
+                if diesel_skid.running == False:
+                    diesel_skid.shutdown_node()
         elif child.running == False:
             child.repairtime += 1
             child.total_repairtime += 1
@@ -35,9 +37,14 @@ while main_counter < total_time:
                 child.repairtime = 0
                 child.running = True
                 diesel_skid.update_node_status()
+                if diesel_skid.running == True:
+                    diesel_skid.startup_node()
         else:
             print('error 1')
-        print(child.name)
-        print(child.total_runtime)
-        print(child.total_repairtime)
+        print('running? ', child.running, 'runtime: ', child.runtime)
+    print('running? ', diesel_skid.running)
     main_counter += 1
+
+
+
+
