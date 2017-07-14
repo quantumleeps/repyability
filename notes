@@ -1,0 +1,78 @@
+
+while main_counter < total_time:
+    for child in diesel_skid.children:
+        # print(child.next_failure)
+        if child.runtime >= child.next_failure:
+            print('you got here')
+            child.running = False
+            child.runtime = 0
+            child.next_failure = child.mttf.get_from_distribution()
+            diesel_skid.update_node_status()
+            if diesel_skid.running == False:
+                diesel_skid.shutdown_node()
+        elif child.repairtime >= child.next_repair_time:
+            child.running = True
+            child.repairtime = 0
+            child.next_repair_time = child.mttr.get_from_distribution()
+            diesel_skid.update_node_status()
+            if diesel_skid.running == True:
+                diesel_skid.startup_node()
+        # elif child.runtime > 0 and child.repairtime == 0 and child.running:
+        elif child.running:
+            child.runtime += 1
+            child.total_runtime += 1
+        # elif child.repairtime > 0 and child.runtime == 0 and child.running == False:
+        elif child.running == False and child.runtime == 0:
+            child.repairtime += 1
+            child.total_repairtime += 1
+        else:
+            print('not sure what happened, error 101')
+    # print('engine', engine.running, 'runtime', engine.runtime)
+    # print('gearbox', gearbox.running, 'runtime', gearbox.runtime)
+    # print('hp_pump', hp_pump.running, 'runtime', hp_pump.runtime)
+    # print('diesel_skid', diesel_skid.running, 'runtime')
+    main_counter += 1
+
+# while main_counter < total_time:
+#     for child in diesel_skid.children:
+#         if child.running == False:
+#             child.total_repairtime += 1
+#             if child.repairtime >= floor(child.next_repair_time):
+#                 child.running = True
+#                 diesel_skid.startup_node()
+#                 child.repairtime = 0
+#             else:
+#                 child.repairtime += 1    
+#         else:
+#             child.total_runtime += 1
+#             if child.runtime >= floor(child.next_failure):
+#                 child.running = False
+#                 diesel_skid.shutdown_node()
+#                 child.runtime = 0
+#             else:
+#                 child.runtime += 1
+#     diesel_skid.update_node_status()
+#     if diesel_skid.running:
+#         diesel_skid.total_runtime += 1
+#     else:
+#         diesel_skid.total_repairtime += 1
+#     # print('engine', engine.running, 'runtime', engine.runtime)
+#     # print('gearbox', gearbox.running, 'runtime', gearbox.runtime)
+#     # print('hp_pump', hp_pump.running, 'runtime', hp_pump.runtime)
+#     # print('diesel_skid', diesel_skid.running, 'runtime')
+#     main_counter += 1
+
+# # print(engine.get_availability())
+# print(diesel_skid.total_runtime)
+# print(engine.total_runtime)
+
+# # # is the go through an hour a node function?
+
+# # Need to run through all of the nodes from top-down
+# # need a method to spit out the number of children and children's children
+
+# # when something breaks, the node has to shut down, this should stop
+# # any runtime from accummulating on all the children
+# # when the component gets fixed, all children need to be turned on
+
+# only if the node is running, do you do any incrementing of anything in the group
