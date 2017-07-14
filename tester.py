@@ -22,5 +22,3 @@ engine = Component(Distribution(2, 1, 'Gamma'), Distribution(1, 0.8), 'Engine', 
 # engine.switch_state()
 # print(engine.running)
 print(engine.capacity)
-
-print('test')
