@@ -20,6 +20,7 @@ main_counter = 0  # hours
 total_time = 1800
 
 while main_counter < total_time:
+    # print(diesel_skid.children[0].next_failure)
     for child in diesel_skid.children:
         if child.running == True:
             child.runtime += 1
@@ -27,6 +28,7 @@ while main_counter < total_time:
             if child.runtime >= child.next_failure:
                 child.runtime = 0
                 child.running = False
+                child.next_failure = child.mttf.get_from_distribution()
                 diesel_skid.update_node_status()
                 if diesel_skid.running == False:
                     diesel_skid.shutdown_node()
@@ -36,12 +38,13 @@ while main_counter < total_time:
             if child.repairtime >= child.next_repair_time:
                 child.repairtime = 0
                 child.running = True
+                child.next_repair_time = child.mttr.get_from_distribution()
                 diesel_skid.update_node_status()
                 if diesel_skid.running == True:
                     diesel_skid.startup_node()
         else:
             print('error 1')
-        print('running? ', child.running, 'runtime: ', child.runtime)
+        print(child.name, 'running? ', child.running, 'runtime: ', child.runtime)
     print('running? ', diesel_skid.running)
     main_counter += 1
 
