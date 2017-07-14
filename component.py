@@ -9,18 +9,30 @@ class Component():
     # mttf is a Distribution, so is mttr
     # type is either 'np' or 'p' which means
     # either non-producing or producing
-    def __init__(self, mttf, mttr, name='', type='np'):
+    def __init__(self, mttf, mttr, name='', comp_type='np'):
         self.name = name
         self.mttf = mttf
         self.mttr = mttr
         self.running = True
-        self.type
+        self.runtime = 0
+        self.repairtime = 0
+        self.comp_type = comp_type
+        self.next_failure = self.mttf.get_from_distribution()
+        self.next_repair_time = self.mttr.get_from_distribution()
+        self.total_runtime = 0
+        self.total_repairtime = 0
 
     def switch_state(self):
         if self.running == True:
             self.running = False
         else:
             self.running = True
+
+    def get_next_failure(self):
+        return self.mttf.get_from_distribution
+
+    def get_availability(self):
+        return self.total_runtime/(self.total_runtime+self.total_repairtime)
 
 class Distribution():
 
@@ -45,8 +57,10 @@ class Distribution():
 
     def get_from_distribution(self):
         if self.dist_type == 'Normal':
-            return self.var_a + self.var_b*np.random.randn()
+            x = self.var_a + self.var_b*np.random.randn()
+            return x
         elif self.dist_type == 'Gamma':
-            return np.random.gamma(self.var_a, self.var_b)
+            x = np.random.gamma(self.var_a, self.var_b)
+            return x
         else:
             print('Please modify distribution type')
